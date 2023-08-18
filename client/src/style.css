@@ -1,0 +1,316 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+/* Variables */
+:root {
+  --text: #fdfcfd;
+  --background: #161315;
+  --primary: #4d5c52;
+  --secondary: #171a1c;
+  --accent: #748b7d;
+}
+
+/* Global styles */
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+}
+
+h1{
+  font-size: 28px;
+  font-weight: 500;
+}
+
+h2{
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.container{
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Join/Log in container styles */
+.join-container {
+  background-color: var(--secondary);
+  padding: 25vh 20vw;
+  border-radius: 8px;
+}
+
+.join-container h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.join-container input {
+  width: 92%;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: none;
+  background-color: var(--background);
+  color: var(--text);
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.join-container input::placeholder {
+  color: var(--text)
+}
+
+.join-container input:focus {
+  outline: none;
+  background-color: var(--accent);
+}
+
+.join-container button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  background-color: var(--accent);
+  color: var(--text);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.join-container button:hover {
+  background-color: var(--primary);
+}
+
+.chat-container{
+  display: flex;
+  flex-direction: row;
+}
+
+.chat-sidebar{
+  margin-top: 2.5vh;
+  margin-left: 1.5vw;
+  height: 95vh;
+  width: 15vw;
+  border-radius: 8px;
+  background-color: var(--secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chat-sidebar .MuiInputBase-root {
+  background-color: var(--background);
+  border-radius: 8px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  height: 50px;
+  transition: 0.25s;
+}
+
+.chat-sidebar .MuiInputBase-root:hover {
+  background-color: var(--accent);
+}
+
+.chat-sidebar .MuiInputBase-input {
+  color: var(--text);
+}
+
+.chat-sidebar .MuiInput-underline:before, .chat-sidebar .MuiInput-underline:after {
+  display: none;
+}
+
+.chat-sidebar .MuiSvgIcon-root {
+  color: var(--text);
+}
+
+/* Remove focus border */
+.chat-sidebar .Mui-focused .MuiOutlinedInput-notchedOutline,
+.chat-sidebar .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+    border: none;
+}
+
+/* Remove default border */
+.chat-sidebar .MuiOutlinedInput-notchedOutline {
+    border: none;
+}
+
+/* Remove the blue ripple effect on focus */
+.chat-sidebar .MuiInputBase-root.Mui-focused::before {
+    box-shadow: none;
+}
+
+.profiles-holder{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 90%;
+  height: 7%;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  transition: .25s;
+}
+
+.profiles-holder h2{
+  font-size: 16px;
+}
+
+.profiles-holder:hover{
+  background-color: var(--accent);
+}
+
+.profile-pic{
+  width: 30px;          /* Adjust as needed */
+  height: 30px;         /* Adjust as needed */
+  border-radius: 50%;    /* This makes it circular */
+  overflow: hidden;      /* Ensures the image doesn't go outside the boundaries */
+  border: 2px solid var(--secondary); /* Optional: add a border */
+  margin-left: 20px;
+  margin-right: 15px;
+}
+
+.profile-pic img {
+  width: 100%;           /* Ensures the image takes the full size of its container */
+  height: 100%;
+  object-fit: cover;     /* Ensures the image covers the container without distortion */
+}
+
+.chat-header{
+  height: 15vh;
+  width: 85vw;
+  background-color: var(--background);
+}
+
+.chat-header h1{
+  margin-left: 4.25vw;
+  margin-top: 50px;
+}
+
+.body-container{
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 84vw;
+  margin: 15vh 16.3vw;
+}
+
+.chat-body{
+  height: 70vh;
+  width: 100%;
+  background-color: var(--background);
+}
+
+.chat-footer{
+  height: 12.5vh;
+  background-color: var(--background);
+  display: flex;
+  justify-content: center;
+  align-items: end;
+}
+
+
+.chat-footer {
+  width: 75vw;
+  padding: 0 10px; /* Adds some padding on the sides for the TextField */
+}
+
+.chat-footer .MuiInputBase-root {
+  background-color: var(--secondary);
+  border-radius: 8px;
+  transition: 0.25s;
+}
+
+/* Adjusting the send button wrapper */
+.send-button-wrapper {
+  background-color: var(--primary);
+  border-radius: 4px;
+  padding: 2.5px;
+  transition: 0.5s;
+}
+
+.send-button-wrapper .MuiSvgIcon-root {
+  font-size: 16px;
+}
+
+.send-button-wrapper:hover{
+  background-color: var(--accent);
+}
+
+.chat-footer .MuiInputBase-input {
+  color: var(--text);
+}
+
+.chat-footer .MuiInput-underline:before, .chat-footer .MuiInput-underline:after {
+  display: none;
+}
+
+.chat-footer .MuiSvgIcon-root {
+  color: var(--text);
+}
+
+/* Remove focus border */
+.chat-footer .Mui-focused .MuiOutlinedInput-notchedOutline,
+.chat-footer .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border: none;
+}
+
+/* Remove the blue ripple effect on focus */
+.chat-footer .MuiInputBase-root.Mui-focused::before {
+    box-shadow: none;
+}
+
+.chat-body .message-container {
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.messages{
+  display: flex;
+  flex-direction: column;
+}
+
+#you {
+  align-items: flex-start;
+}
+
+#you .message-content{
+  align-items: flex-start;
+  margin-left: 4.25vw;
+  background-color: var(--primary);
+  padding: 2px 15px;
+  border-radius: 4px;
+  max-width: 73vw;
+}
+
+#you .message-meta{
+  align-items: flex-start;
+  margin-left: 4.25vw;
+  margin-top: -7.5px;
+  margin-bottom: 5px;
+}
+
+#other {
+  align-items: flex-end;
+}
+
+#other .message-content{
+  align-items: flex-end;
+  margin-right: 4.25vw;
+  background-color: var(--accent);
+  padding: 2px 15px;
+  border-radius: 4px;
+  max-width: 73vw;
+}
+
+#other .message-meta{
+  align-items: flex-end;
+  margin-right: 4.25vw;
+  margin-top: -7.5px;
+  margin-bottom: 5px;
+}
