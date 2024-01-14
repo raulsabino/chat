@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 
-/* Variables */
+/* Variables for easy theme management */
 :root {
   --text: #fdfcfd;
   --background: #161315;
@@ -17,25 +17,28 @@ body {
   font-family: 'Roboto', sans-serif;
   background-color: var(--background);
   color: var(--text);
+  overflow-x: hidden;
 }
 
-h1{
+h1, h2 {
+  font-weight: 500;
+}
+
+h1 {
   font-size: 28px;
-  font-weight: 500;
 }
 
-h2{
+h2 {
   font-size: 18px;
-  font-weight: 500;
 }
 
-.container{
-  margin: 0;
-  padding: 0;
+.container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 /* Join/Log in container styles */
@@ -62,7 +65,7 @@ h2{
 }
 
 .join-container input::placeholder {
-  color: var(--text)
+  color: var(--text);
 }
 
 .join-container input:focus {
@@ -85,12 +88,12 @@ h2{
   background-color: var(--primary);
 }
 
-.chat-container{
+.chat-container {
   display: flex;
   flex-direction: row;
 }
 
-.chat-sidebar{
+.chat-sidebar {
   margin-top: 2.5vh;
   margin-left: 1.5vw;
   height: 95vh;
@@ -102,94 +105,54 @@ h2{
   align-items: center;
 }
 
-.chat-sidebar .MuiInputBase-root {
-  background-color: var(--background);
-  border-radius: 8px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  height: 50px;
-  transition: 0.25s;
+.chat-sidebar h1 {
+  margin-top: 3.5vh;
 }
 
-.chat-sidebar .MuiInputBase-root:hover {
-  background-color: var(--accent);
-}
-
-.chat-sidebar .MuiInputBase-input {
-  color: var(--text);
-}
-
-.chat-sidebar .MuiInput-underline:before, .chat-sidebar .MuiInput-underline:after {
-  display: none;
-}
-
-.chat-sidebar .MuiSvgIcon-root {
-  color: var(--text);
-}
-
-/* Remove focus border */
-.chat-sidebar .Mui-focused .MuiOutlinedInput-notchedOutline,
-.chat-sidebar .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
-    border: none;
-}
-
-/* Remove default border */
-.chat-sidebar .MuiOutlinedInput-notchedOutline {
-    border: none;
-}
-
-/* Remove the blue ripple effect on focus */
-.chat-sidebar .MuiInputBase-root.Mui-focused::before {
-    box-shadow: none;
-}
-
-.profiles-holder{
+.profile-holder {
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: 90%;
-  height: 7%;
+  justify-content: left;
+  padding-right: 30px;
+  width: 79%;
+  height: 8%;
   border-radius: 8px;
-  margin-bottom: 10px;
-  transition: .25s;
+  margin-bottom: 15px;
+  transition: 0.25s;
 }
 
-.profiles-holder h2{
-  font-size: 16px;
-}
-
-.profiles-holder:hover{
+.profile-holder:hover {
   background-color: var(--accent);
 }
 
-.profile-pic{
-  width: 30px;          /* Adjust as needed */
-  height: 30px;         /* Adjust as needed */
-  border-radius: 50%;    /* This makes it circular */
-  overflow: hidden;      /* Ensures the image doesn't go outside the boundaries */
-  border: 2px solid var(--secondary); /* Optional: add a border */
+.profile-pic {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  overflow: hidden;
   margin-left: 20px;
   margin-right: 15px;
 }
 
 .profile-pic img {
-  width: 100%;           /* Ensures the image takes the full size of its container */
+  width: 100%;
   height: 100%;
-  object-fit: cover;     /* Ensures the image covers the container without distortion */
+  object-fit: cover;
 }
 
-.chat-header{
+.chat-header {
   height: 15vh;
   width: 85vw;
   background-color: var(--background);
 }
 
-.chat-header h1{
+.chat-header h1 {
   margin-left: 4.25vw;
-  margin-top: 50px;
+  margin-top: 6vh;
 }
 
-.body-container{
+.body-container {
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -198,30 +161,31 @@ h2{
   margin: 15vh 16.3vw;
 }
 
-.chat-body{
+.chat-body {
   height: 70vh;
   width: 100%;
   background-color: var(--background);
 }
 
-.chat-footer{
+.chat-footer {
   height: 12.5vh;
+  width: 75vw;
   background-color: var(--background);
   display: flex;
   justify-content: center;
   align-items: end;
+  padding: 0 10px; /* Adds padding on the sides for the TextField */
 }
 
-
-.chat-footer {
-  width: 75vw;
-  padding: 0 10px; /* Adds some padding on the sides for the TextField */
-}
-
+/* Styling for the TextField and send button in chat-footer */
 .chat-footer .MuiInputBase-root {
   background-color: var(--secondary);
   border-radius: 8px;
   transition: 0.25s;
+}
+
+.chat-footer .MuiInputBase-input {
+  color: var(--text);
 }
 
 /* Adjusting the send button wrapper */
@@ -236,33 +200,28 @@ h2{
   font-size: 16px;
 }
 
-.send-button-wrapper:hover{
+.send-button-wrapper:hover {
   background-color: var(--accent);
 }
 
-.chat-footer .MuiInputBase-input {
-  color: var(--text);
+/* Style adjustments for various Material-UI components */
+.chat-footer .MuiInput-underline:before,
+.chat-footer .MuiInput-underline:after,
+.chat-footer .Mui-focused .MuiOutlinedInput-notchedOutline,
+.chat-footer .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  display: none;
 }
 
-.chat-footer .MuiInput-underline:before, .chat-footer .MuiInput-underline:after {
-  display: none;
+/* Remove the blue ripple effect on focus */
+.chat-footer .MuiInputBase-root.Mui-focused::before {
+  box-shadow: none;
 }
 
 .chat-footer .MuiSvgIcon-root {
   color: var(--text);
 }
 
-/* Remove focus border */
-.chat-footer .Mui-focused .MuiOutlinedInput-notchedOutline,
-.chat-footer .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
-  border: none;
-}
-
-/* Remove the blue ripple effect on focus */
-.chat-footer .MuiInputBase-root.Mui-focused::before {
-    box-shadow: none;
-}
-
+/* Chat messages styling */
 .chat-body .message-container {
   width: 100%;
   height: 100%;
@@ -270,47 +229,91 @@ h2{
   overflow-x: hidden;
 }
 
-.messages{
+/* Scrollbar customization */
+.react-scroll-to-bottom--css-kjplq-1n7m0yu::-webkit-scrollbar {
+  background-color: transparent;
+}
+
+.react-scroll-to-bottom__button {
+  display: none !important;
+}
+
+.messages {
   display: flex;
   flex-direction: column;
 }
 
-#you {
+#you, #other {
   align-items: flex-start;
 }
 
-#you .message-content{
-  align-items: flex-start;
-  margin-left: 4.25vw;
+#you .message-content,
+#other .message-content {
   background-color: var(--primary);
   padding: 2px 15px;
   border-radius: 4px;
   max-width: 73vw;
 }
 
-#you .message-meta{
-  align-items: flex-start;
-  margin-left: 4.25vw;
+#you .message-meta,
+#other .message-meta {
   margin-top: -7.5px;
   margin-bottom: 5px;
+}
+
+#you .message-content {
+  margin-left: 4.25vw;
+}
+
+#you .message-meta {
+  margin-left: 4.25vw;
 }
 
 #other {
   align-items: flex-end;
 }
 
-#other .message-content{
-  align-items: flex-end;
+#other .message-content {
   margin-right: 4.25vw;
   background-color: var(--accent);
-  padding: 2px 15px;
-  border-radius: 4px;
-  max-width: 73vw;
 }
 
-#other .message-meta{
-  align-items: flex-end;
+#other .message-meta {
   margin-right: 4.25vw;
-  margin-top: -7.5px;
-  margin-bottom: 5px;
+}
+
+.gif {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.message-gif {
+  align-items: flex-start;
+  margin-left: 4.25vw;
+  background-color: var(--primary);
+  padding: 2px 15px;
+  border-radius: 4px;
+  width: max-content;
+}
+
+.gif-button {
+  padding: 12px;
+  color: var(--text);
+  background-color: var(--accent);
+  border-radius: 4px;
+  transition: 0.25s;
+  border: none;
+  margin-bottom: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.gif-button:hover {
+  background-color: var(--accent);
+}
+
+.button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

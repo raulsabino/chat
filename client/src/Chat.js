@@ -1,138 +1,237 @@
 import React, { useState, useEffect } from 'react';
-import SearchIcon from '@mui/icons-material/Search';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import { TextField, InputAdornment, IconButton } from '@mui/material';
-import ScrollToBottom from "react-scroll-to-bottom";
+import ScrollToBottom from 'react-scroll-to-bottom';
 
 const Chat = ({ socket, username, room }) => {
-  const [currentMessage, setCurrentMessage] = useState("");
+  // State hooks for managing chat functionalities
+  const [currentMessage, setCurrentMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
+  const [userList, setUserList] = useState([]);
+  const [previewGif, setPreviewGif] = useState(null);
+  const [gifResults, setGifResults] = useState([]);
+  const [gifIndex, setGifIndex] = useState(0);
 
+  // Utility function to format the time for messages
+  const formatTime = (date) => {
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+
+    hours = hours % 12 || 12;
+    minutes = minutes < 10 ? `0${minutes}` : minutes;
+    return `${hours}:${minutes} ${ampm}`;
+  };
+
+  // Function to send a text message
   const sendMessage = async () => {
-    if (currentMessage !== "") {
-        const now = new Date(Date.now());
-        let hours = now.getHours();
-        let minutes = now.getMinutes();
-        const ampm = hours >= 12 ? 'PM' : 'AM';
+    if (currentMessage !== '' && !currentMessage.startsWith('/')) {
+      const messageData = {
+        room,
+        author: username,
+        message: currentMessage,
+        time: formatTime(new Date(Date.now()))
+      };
 
-        hours = hours % 12;
-        hours = hours ? hours : 12; // the hour '0' should be '12'
-        minutes = minutes < 10 ? '0' + minutes : minutes;
-        const timeStr = hours + ':' + minutes + ' ' + ampm;
+      if (previewGif) setPreviewGif(null);
 
-        const messageData = {
-            room: room,
-            author: username,
-            message: currentMessage,
-            time: timeStr
-        };
-        
-        await socket.emit("send_message", messageData);
-        setMessageList((list) => [...list, messageData]);
-        setCurrentMessage("");
+      await socket.emit('send_message', messageData);
+      setMessageList((list) => [...list, messageData]);
+      setCurrentMessage('');
     }
-};
+  };
 
+  // Effect hook for setting up and cleaning up socket listeners
   useEffect(() => {
-    const receiveMessage = (data) => {
-      setMessageList((list) => [...list, data]);
-    };
+    socket.on('previous_messages', (messages) => setMessageList(messages));
+    socket.on('receive_message', (data) => setMessageList((list) => [...list, data]));
+    socket.on('update_user_list', (users) => setUserList(users));
 
-    socket.on("receive_message", receiveMessage);
-
-    // Cleanup listener on component unmount
+    // Cleanup function to remove listeners on component unmount
     return () => {
-        socket.off("receive_message", receiveMessage);
+      socket.off('receive_message');
+      socket.off('update_user_list');
     };
-  }, []);
+  }, [socket]);
 
+  // Handler for changes in the message input field
+  const handleInputChange = (e) => {
+    const input = e.target.value;
+    setCurrentMessage(input);
+
+    // Clear GIF previews when input is empty or remove '/' for GIF search
+    if (input.trim() === '') {
+      setPreviewGif(null);
+      setGifResults([]);
+    } else if (input.startsWith('/')) {
+      searchGIFs(input.slice(1));
+    } else {
+      setGifResults([]);
+    }
+  };
+
+  const searchGIFs = async (searchTerm) => {
+    try {
+      const response = await fetch(`http://localhost:3001/search-gifs?q=${searchTerm}`);
+      const data = await response.json();
+      setGifResults(data); // Save all the GIFs instead of a single random one
+      setPreviewGif(data[gifIndex]); // Show the GIF at the current index
+    } catch (error) {
+      console.error('Error searching GIFs:', error);
+    }
+  };
+
+  const nextGIF = () => {
+    if (gifIndex < gifResults.length - 1) {
+      setGifIndex(prevIndex => prevIndex + 1);
+    } else {
+      setGifIndex(0); // Loop back to the beginning
+    }
+    setPreviewGif(gifResults[(gifIndex + 1) % gifResults.length]);
+  };
+  
+  const prevGIF = () => {
+    if (gifIndex > 0) {
+      setGifIndex(prevIndex => prevIndex - 1);
+    } else {
+      setGifIndex(gifResults.length - 1); // Loop back to the last GIF
+    }
+    setPreviewGif(gifResults[gifIndex === 0 ? gifResults.length - 1 : gifIndex - 1]);
+  };  
+
+  const sendGIF = async () => {
+    if (previewGif) {
+      const now = new Date(Date.now());
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+  
+      hours = hours % 12;
+      hours = hours ? hours : 12; 
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      const timeStr = hours + ':' + minutes + ' ' + ampm;
+  
+      const messageData = {
+        room: room,
+        author: username,  // This will ensure the correct username is sent
+        message: previewGif.images.fixed_height.url,
+        time: timeStr
+    };
+      
+      await socket.emit("send_message", messageData);
+      setMessageList((list) => [...list, messageData]);
+      setCurrentMessage("");
+      setPreviewGif(null);  // Clear the preview
+    }
+  }
+
+  const isGifUrl = (url) => {
+    const pattern = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g;
+    return pattern.test(url);
+  };
+
+  const handleKeyDown = (event) => {
+    if (previewGif) {
+      if (event.key === 'ArrowRight') {
+        nextGIF();
+        event.preventDefault();
+      } else if (event.key === 'ArrowLeft') {
+        prevGIF();
+        event.preventDefault();
+      }
+    }
+  };
 
 
   return (
-    <div className="chat-container">
+    <div className="chat-container" onKeyDown={handleKeyDown} tabIndex="0">
       <div className="chat-sidebar">
-        <div className="input">
-          <TextField
-              placeholder='Search...'
-              fullWidth
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-        </div>
-        <div className="profiles-holder">
-          <div className="profile-pic">
-            <img src="https://secure.gravatar.com/avatar/dbae6a6fd43a7ec6ffcc2f02a0092e28.jpg?s=192&d=https%3A%2F%2Fa.slack-edge.com%2Fdf10d%2Fimg%2Favatars%2Fava_0007-192.png" alt="pfp" />
+        <h1>Users online</h1>
+        {userList.map(user => (
+          <div className="profile-holder" key={user.id}>
+            <div className="profile-pic">
+              <img src="https://secure.gravatar.com/avatar/dbae6a6fd43a7ec6ffcc2f02a0092e28.jpg?s=192&d=https%3A%2F%2Fa.slack-edge.com%2Fdf10d%2Fimg%2Favatars%2Fava_0007-192.png" alt="pfp" />
+            </div>
+            <h2>{user.username}</h2>
           </div>
-          <h2>John</h2>
-        </div>
-        <div className="profiles-holder">
-          <div className="profile-pic">
-            <img src="https://secure.gravatar.com/avatar/dbae6a6fd43a7ec6ffcc2f02a0092e28.jpg?s=192&d=https%3A%2F%2Fa.slack-edge.com%2Fdf10d%2Fimg%2Favatars%2Fava_0007-192.png" alt="pfp" />
-          </div>
-          <h2>James</h2>
-        </div>
-        <div className="profiles-holder">
-          <div className="profile-pic">
-            <img src="https://secure.gravatar.com/avatar/dbae6a6fd43a7ec6ffcc2f02a0092e28.jpg?s=192&d=https%3A%2F%2Fa.slack-edge.com%2Fdf10d%2Fimg%2Favatars%2Fava_0007-192.png" alt="pfp" />
-          </div>
-          <h2>Joe</h2>
-        </div>
+        ))}
       </div>
       <div className="chat-header">
-        <h1>Live chat</h1>
+        <h1>Live chat - {room}</h1>
       </div>
       <div className="body-container">
         <div className="chat-body">
           <ScrollToBottom className='message-container'>
             {messageList.map((messageContent) => {
-              return <div 
-                className="messages"
-                id={username === messageContent.author ? "you" : "other"}
-              >
-                <div className="message-content">
-                  <p>{messageContent.message}</p>
+              return (
+                <div 
+                  className="messages"
+                  id={username === messageContent.author ? "you" : "other"}
+                >
+                  <div className="message-content">
+                    {isGifUrl(messageContent.message) ? (
+                      <img src={messageContent.message} alt="GIF" className="gif" />
+                    ) : (
+                      <p>{messageContent.message}</p>
+                    )}
+                  </div>
+                  <div className="message-meta">
+                    <p><b>{messageContent.author}</b> {messageContent.time}</p>
+                  </div>
                 </div>
-                <div className="message-meta">
-                  <p>Sent {messageContent.time}</p>
+              );
+            })}
+
+            {previewGif && (
+              <div id="you">
+                <div className="message-gif">
+                  <img src={previewGif.images.fixed_height.url} alt={previewGif.title} className="gif" />
+                  <div className='button-container'>
+                    <button onClick={prevGIF} className="gif-button">Previous</button>
+                    <button onClick={nextGIF} className="gif-button">Next</button>
+                  </div>
                 </div>
               </div>
-            })}
+            )}
           </ScrollToBottom>
         </div>
         <div className="chat-footer">
-        <TextField 
-          fullWidth
-          value={currentMessage}
-          placeholder='Message...' 
-          onChange={(event) => {
-            setCurrentMessage(event.target.value);
-          }}
-          onKeyDown={(event) => {
-            if(event.key === 'Enter') {
-              sendMessage();
-              event.preventDefault();  // Prevents the default action (form submission, newline, etc.)
-            }
-          }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <div className="send-button-wrapper">
-                  <IconButton 
-                    onClick={sendMessage}
-                    disableFocusRipple
-                    disableRipple
-                  >
-                    <SendRoundedIcon />
-                  </IconButton>
-                </div>
-              </InputAdornment>
-            ),
-          }}
+          <TextField 
+            fullWidth
+            value={currentMessage}
+            placeholder='Type "/" followed by your GIF search or write a message...' 
+            onChange={handleInputChange}
+            onKeyDown={(event) => {
+              if(event.key === 'Enter') {
+                if (previewGif) {
+                  sendGIF();
+                } else if (!currentMessage.startsWith("/")) {
+                  sendMessage();
+                }
+                event.preventDefault();  // Prevents the default action (form submission, newline, etc.)
+              }
+            }}            
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <div className="send-button-wrapper">
+                    <IconButton 
+                      onClick={() => {
+                        if (previewGif) {
+                          sendGIF();
+                        } else if (!currentMessage.startsWith("/")) {
+                          sendMessage();
+                        }
+                      }}
+                      disableFocusRipple
+                      disableRipple
+                    >
+                      <SendRoundedIcon />
+                    </IconButton>
+                  </div>
+                </InputAdornment>
+              ),
+            }}
           />
         </div>
       </div>
