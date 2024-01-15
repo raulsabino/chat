@@ -3,7 +3,7 @@ import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import { TextField, InputAdornment, IconButton } from '@mui/material';
 import ScrollToBottom from 'react-scroll-to-bottom';
 
-const Chat = ({ socket, username, room }) => {
+const Chat = ({ socket, username, room, resetLoginState }) => {
   // State hooks for managing chat functionalities
   const [currentMessage, setCurrentMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
@@ -81,23 +81,12 @@ const Chat = ({ socket, username, room }) => {
     }
   };
 
-  const nextGIF = () => {
-    if (gifIndex < gifResults.length - 1) {
-      setGifIndex(prevIndex => prevIndex + 1);
-    } else {
-      setGifIndex(0); // Loop back to the beginning
-    }
-    setPreviewGif(gifResults[(gifIndex + 1) % gifResults.length]);
+  const shuffleGIF = () => {
+    // Pick a random index in the gifResults array
+    const randomIndex = Math.floor(Math.random() * gifResults.length);
+    setGifIndex(randomIndex); // Update the gifIndex state
+    setPreviewGif(gifResults[randomIndex]); // Set the preview GIF to the random one selected
   };
-  
-  const prevGIF = () => {
-    if (gifIndex > 0) {
-      setGifIndex(prevIndex => prevIndex - 1);
-    } else {
-      setGifIndex(gifResults.length - 1); // Loop back to the last GIF
-    }
-    setPreviewGif(gifResults[gifIndex === 0 ? gifResults.length - 1 : gifIndex - 1]);
-  };  
 
   const sendGIF = async () => {
     if (previewGif) {
@@ -130,31 +119,28 @@ const Chat = ({ socket, username, room }) => {
     return pattern.test(url);
   };
 
-  const handleKeyDown = (event) => {
-    if (previewGif) {
-      if (event.key === 'ArrowRight') {
-        nextGIF();
-        event.preventDefault();
-      } else if (event.key === 'ArrowLeft') {
-        prevGIF();
-        event.preventDefault();
-      }
-    }
+  // leaves user from the room
+  const leaveRoom = () => {
+    socket.emit('leave_room', room);
+    resetLoginState(); // This function will reset the state and show the login form
   };
 
 
   return (
-    <div className="chat-container" onKeyDown={handleKeyDown} tabIndex="0">
+    <div className="chat-container" tabIndex="0">
       <div className="chat-sidebar">
-        <h1>Users online</h1>
-        {userList.map(user => (
-          <div className="profile-holder" key={user.id}>
-            <div className="profile-pic">
-              <img src="https://secure.gravatar.com/avatar/dbae6a6fd43a7ec6ffcc2f02a0092e28.jpg?s=192&d=https%3A%2F%2Fa.slack-edge.com%2Fdf10d%2Fimg%2Favatars%2Fava_0007-192.png" alt="pfp" />
+        <div className='chat-sidebar-container'>
+          <h1>Users online</h1>
+          {userList.map(user => (
+            <div className="profile-holder" key={user.id}>
+              <div className="profile-pic">
+                <img src="https://secure.gravatar.com/avatar/dbae6a6fd43a7ec6ffcc2f02a0092e28.jpg?s=192&d=https%3A%2F%2Fa.slack-edge.com%2Fdf10d%2Fimg%2Favatars%2Fava_0007-192.png" alt="pfp" />
+              </div>
+              <h2>{user.username}</h2>
             </div>
-            <h2>{user.username}</h2>
-          </div>
-        ))}
+          ))}
+        </div>
+        <div className='back-button' onClick={leaveRoom}>Back</div>
       </div>
       <div className="chat-header">
         <h1>Live chat - {room}</h1>
@@ -186,10 +172,9 @@ const Chat = ({ socket, username, room }) => {
               <div id="you">
                 <div className="message-gif">
                   <img src={previewGif.images.fixed_height.url} alt={previewGif.title} className="gif" />
-                  <div className='button-container'>
-                    <button onClick={prevGIF} className="gif-button">Previous</button>
-                    <button onClick={nextGIF} className="gif-button">Next</button>
-                  </div>
+                </div>
+                <div className='button-container'>
+                  <button onClick={shuffleGIF} className="gif-button">Shuffle</button>
                 </div>
               </div>
             )}

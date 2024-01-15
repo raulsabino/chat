@@ -53,6 +53,13 @@ io.on("connection", (socket) => {
 
   socket.on("join_room", async (data) => {
     const { room, username } = data;
+
+    // Check if the username is already in use in the room
+    if (rooms[room] && rooms[room].some(user => user.username === username)) {
+      socket.emit("join_error", "Username is already taken in this room");
+      return;
+    }
+
     rooms[room] = rooms[room] || [];
     rooms[room].push({ id: socket.id, username });
     socket.join(room);
@@ -75,6 +82,32 @@ io.on("connection", (socket) => {
     } catch (err) {
       console.error('Error saving message:', err);
     }    
+  });
+
+  socket.on("leave_room", (room) => {
+    // Function to remove the user from the room array
+    const removeUserFromRoom = (userArray, userId) => {
+      return userArray.filter(user => user.id !== userId);
+    };
+
+    // Check if the room exists
+    if (rooms[room]) {
+      // Remove the user from the room
+      rooms[room] = removeUserFromRoom(rooms[room], socket.id);
+
+      // Emit the updated user list to all clients in the room
+      io.to(room).emit("update_user_list", rooms[room]);
+
+      // If the room is now empty, you can optionally delete it
+      if (rooms[room].length === 0) {
+        delete rooms[room];
+      }
+
+      // Finally, have the socket leave the room
+      socket.leave(room);
+    }
+
+    console.log(`User with ID: ${socket.id} left room: ${room}`);
   });
 
   socket.on("disconnect", () => {

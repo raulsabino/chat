@@ -7,6 +7,7 @@
   --primary: #4d5c52;
   --secondary: #171a1c;
   --accent: #748b7d;
+  --pos: 470px
 }
 
 /* Global styles */
@@ -32,6 +33,22 @@ h2 {
   font-size: 18px;
 }
 
+/* Theme color picker */
+.theme-container{
+  background-color: var(--secondary);
+  position: absolute;
+  padding: 10px;
+  border-radius: 8px;
+  top: 93.25vh;
+  right: 97vw;
+  z-index: 1001;
+}
+
+.theme-container:hover{
+  background-color: var(--primary);
+  transition: 0.3s;
+}
+
 .container {
   display: flex;
   justify-content: center;
@@ -39,6 +56,57 @@ h2 {
   height: 100vh;
   margin: 0;
   padding: 0;
+}
+
+.modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  z-index: 1000;
+}
+
+.color-selector{
+  position: absolute;
+  padding: 15px;
+  background-color: #171a1c;
+  border-radius: 8px;
+  margin-bottom: 100px;
+  margin-right: var(--pos);
+}
+
+.modal-content {
+  background: #171a1c;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.color-options button {
+  padding: 15px;
+  margin: 0px 5px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #161315;
+  color: #fdfcfd;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  justify-content: center; /* Center button contents */
+  text-align: center; /* Ensure text is centered */
+}
+
+.color-options button:hover {
+  background-color: #4d5c52;
 }
 
 /* Join/Log in container styles */
@@ -98,11 +166,16 @@ h2 {
   margin-left: 1.5vw;
   height: 95vh;
   width: 15vw;
+}
+
+.chat-sidebar-container{
   border-radius: 8px;
   background-color: var(--secondary);
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: calc(100% - 75px);
+  overflow-y: auto;
 }
 
 .chat-sidebar h1 {
@@ -117,13 +190,7 @@ h2 {
   padding-right: 30px;
   width: 79%;
   height: 8%;
-  border-radius: 8px;
   margin-bottom: 15px;
-  transition: 0.25s;
-}
-
-.profile-holder:hover {
-  background-color: var(--accent);
 }
 
 .profile-pic {
@@ -131,14 +198,31 @@ h2 {
   height: 30px;
   border-radius: 50%;
   overflow: hidden;
-  margin-left: 20px;
-  margin-right: 15px;
+  margin-left: 50px;
+  margin-right: 20px;
 }
 
 .profile-pic img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.back-button{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  height: 55px;
+  width: 100%;
+  background-color: var(--primary);
+  border-radius: 4px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.back-button:hover{
+  background-color: var(--accent);
 }
 
 .chat-header {
@@ -158,7 +242,7 @@ h2 {
   flex-direction: column;
   align-items: center;
   width: 84vw;
-  margin: 15vh 16.3vw;
+  margin: 17.5vh 16.3vw;
 }
 
 .chat-body {
@@ -168,13 +252,16 @@ h2 {
 }
 
 .chat-footer {
-  height: 12.5vh;
+  height: 10vh;
   width: 75vw;
   background-color: var(--background);
   display: flex;
   justify-content: center;
   align-items: end;
-  padding: 0 10px; /* Adds padding on the sides for the TextField */
+}
+
+.react-scroll-to-bottom--css-ikcdz-1tj0vk3 {
+  display: none !important;
 }
 
 /* Styling for the TextField and send button in chat-footer */
@@ -243,25 +330,37 @@ h2 {
   flex-direction: column;
 }
 
+/* For Webkit browsers */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* For IE, Edge, and Firefox */
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+
 #you, #other {
   align-items: flex-start;
 }
 
-#you .message-content,
-#other .message-content {
+#you .message-content > p,
+#other .message-content > p {
   background-color: var(--primary);
-  padding: 2px 15px;
-  border-radius: 4px;
+  padding: 15px 20px;
+  border-radius: 8px;
   max-width: 73vw;
 }
 
 #you .message-meta,
 #other .message-meta {
-  margin-top: -7.5px;
+  margin-top: -20px;
   margin-bottom: 5px;
 }
 
-#you .message-content {
+#you .message-content{
   margin-left: 4.25vw;
 }
 
@@ -275,7 +374,6 @@ h2 {
 
 #other .message-content {
   margin-right: 4.25vw;
-  background-color: var(--accent);
 }
 
 #other .message-meta {
@@ -285,22 +383,23 @@ h2 {
 .gif {
   margin-top: 10px;
   margin-bottom: 10px;
+  width: 25vw;
+  height: auto;
+  border-radius: 8px;
 }
 
 .message-gif {
   align-items: flex-start;
   margin-left: 4.25vw;
-  background-color: var(--primary);
-  padding: 2px 15px;
-  border-radius: 4px;
   width: max-content;
 }
 
 .gif-button {
   padding: 12px;
+  width: 25vw;
   color: var(--text);
-  background-color: var(--accent);
-  border-radius: 4px;
+  background-color: var(--primary);
+  border-radius: 8px;
   transition: 0.25s;
   border: none;
   margin-bottom: 10px;
@@ -315,5 +414,6 @@ h2 {
 .button-container {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: left;
+  margin-left: 4.25vw;
 }
