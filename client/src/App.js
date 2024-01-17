@@ -29,6 +29,12 @@ const App = () => {
   // This functions allows the user to join
   const joinRoom = () => {
     if (username !== "" && room !== "") {
+
+      if (username.length > 12) {
+        alert(`Username must be less than ${12 + 1} characters.`);
+        return;
+      }
+
       socket.emit("join_room", { room, username });
       setShowChat(true);
     }
