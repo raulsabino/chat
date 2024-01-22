@@ -28,7 +28,7 @@ const createWindow = () => {
   mainWindow.setMenuBarVisibility(false);
 
   // and load the index.html of the app.
-  mainWindow.loadFile(`${app.getAppPath()}\\build\\index.html`)
+  mainWindow.loadURL("https://mystimessage.onrender.com");
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()

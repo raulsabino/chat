@@ -12,11 +12,11 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: 'https://mystimessage.onrender.com',
     methods: ["GET", "POST"]
   }
 });
-const port = 3001;
+const port = 8080;
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI, {
