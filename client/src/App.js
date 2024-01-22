@@ -6,7 +6,7 @@ import PaletteOutlinedIcon from '@mui/icons-material/PaletteOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import ColorPicker from './ColorPicker';
 
-const socket = io.connect("http://localhost:3001");
+const socket = io.connect("https://mystimessage-server.onrender.com");
 
 const App = () => {
   const [username, setUsername] = useState("");

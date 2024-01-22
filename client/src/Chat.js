@@ -72,7 +72,7 @@ const Chat = ({ socket, username, room, resetLoginState }) => {
 
   const searchGIFs = async (searchTerm) => {
     try {
-      const response = await fetch(`http://localhost:3001/search-gifs?q=${searchTerm}`);
+      const response = await fetch(`https://mystimessage-server.onrender.com/search-gifs?q=${searchTerm}`);
       const data = await response.json();
       setGifResults(data); // Save all the GIFs instead of a single random one
       setPreviewGif(data[gifIndex]); // Show the GIF at the current index
