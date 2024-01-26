@@ -11,7 +11,7 @@ const createWindow = () => {
     height: 720,
     minWidth: 1280,  // Set the minimum width
     minHeight: 720, // Set the minimum height
-    title: "MystiMessage",
+    title: "GhostChat",
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -22,7 +22,7 @@ const createWindow = () => {
   // Maximizes
   mainWindow.maximize();
 
-  mainWindow.setTitle('MystiMessage');
+  mainWindow.setTitle('GhostChat');
 
   // Hide the menu bar
   mainWindow.setMenuBarVisibility(false);
